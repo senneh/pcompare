@@ -1,37 +1,93 @@
-import React from "react";
+import React, { useState } from "react";
 
 import "./Table.css";
 import { BsTrashFill } from "react-icons/bs";
-import type { Product } from "../Product";
+import { kcalPer, proteinPer, proteinPrice, proteinRatio, type Product, type SortKey } from "../Product";
+import { FaSort, FaSortDown, FaSortUp } from "react-icons/fa";
 
 interface TableParams {
   products: Product[],
-  deleteRow: (targetIdx: number) => any
+  deleteRow: (targetIdx: number) => any,
+  sortBy: (sortConfig: SortConfig | null) => any,
 }
+
+
+export interface SortConfig {
+  key: SortKey,
+  direction: 'asc' | 'desc',
+}
+
 
 const numFormat = new Intl.NumberFormat(undefined, {
   minimumFractionDigits: 0,
   maximumFractionDigits: 4,
 });
 
-export const Table = ({ products, deleteRow }: TableParams) => {
+export const Table = ({ products, deleteRow, sortBy }: TableParams) => {
+  const [sortConfig, setSortConfig] = useState<SortConfig | null>(null);
+
+  function sortIcon(key: SortKey) {
+    if (key !== sortConfig?.key) {
+      return <FaSort className="sort-icon" />
+    }
+
+    if (sortConfig.direction === "asc") {
+      return <FaSortDown className="sort-icon" />;
+    } else {
+      return <FaSortUp className="sort-icon" />;
+    }
+  }
+
+  function handleSortBy(key: SortKey) {
+    let direction: "asc" | "desc" = "asc";
+    if (key === sortConfig?.key) {
+      direction = sortConfig?.direction === 'asc' ? 'desc' : 'asc';
+    }
+    setSortConfig({ key, direction });
+    sortBy({ key, direction })
+  }
+
   return <div className="table-wrapper">
     <table className="table">
       <thead >
         <tr>
-          <th className="expand">Description</th>
-          <th>Price</th>
-          <th>
-            <sup>Kcal</sup>/<sub>100gr</sub>
+          <th className="expand sortable-header" onClick={() => handleSortBy("description")}>
+            <div className="header-content">
+              Description
+              {sortIcon("description")}
+            </div>
           </th>
-          <th>
-            <sup>Protein</sup>/<sub>100gr</sub>
+          <th className="sortable-header" onClick={() => handleSortBy("price")}>
+            <div className="header-content">
+              Price
+              {sortIcon("price")}
+            </div>
           </th>
-          <th>
-            <sup>Kcal</sup>/<sub>Protein</sub>
+          <th className="sortable-header" onClick={() => handleSortBy("kcal")}>
+            <div className="header-content">
+              <span><sup>Kcal</sup>/<sub>100gr</sub></span>
+              {sortIcon("kcal")}
+
+            </div>
           </th>
-          <th>
-            <sup>Price</sup>/<sub>Protein</sub>
+          <th className="sortable-header" onClick={() => handleSortBy("prot")}>
+            <div className="header-content">
+              <span><sup>Protein</sup>/<sub>100gr</sub></span>
+              {sortIcon("prot")}
+            </div>
+          </th>
+          <th className="sortable-header" onClick={() => handleSortBy("protRatio")}>
+            <div className="header-content">
+              <span><sup>Kcal</sup>/<sub>Protein</sub></span>
+              {sortIcon("protRatio")}
+            </div>
+          </th>
+          <th className="sortable-header" onClick={() => handleSortBy("protPrice")}>
+            <div className="header-content">
+              <span><sup>Price</sup>/<sub>Protein</sub></span>
+              {sortIcon("protPrice")}
+
+            </div>
           </th>
           <th></th>
         </tr>
@@ -63,24 +119,4 @@ export const Table = ({ products, deleteRow }: TableParams) => {
       </tbody>
     </table>
   </div>
-}
-
-function proteinPer(product: Product): number {
-  const gramsConversionFactor = 100 / product.serving;
-  return product.protein * gramsConversionFactor;
-}
-
-function kcalPer(product: Product): number {
-  const gramsConversionFactor = 100 / product.serving;
-  return product.kcal * gramsConversionFactor;
-}
-
-function proteinRatio(product: Product): number {
-  return product.kcal / product.protein
-}
-
-function proteinPrice(product: Product): number {
-  const protein_per_gram = product.protein / product.serving;
-  const price_per_gram = product.price / product.weight;
-  return price_per_gram / protein_per_gram;
 }

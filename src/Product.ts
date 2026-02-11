@@ -6,56 +6,32 @@ export interface Product {
     serving: number,
     kcal: number,
     protein: number
-
 }
 
+export type SortKey =
+    "description" |
+    "price" |
+    "kcal" |
+    "prot" |
+    "protRatio" |
+    "protPrice";
 
+export function proteinPer(product: Product): number {
+    const gramsConversionFactor = 100 / product.serving;
+    return product.protein * gramsConversionFactor;
+}
 
-// export class Row {
-//     private gramsConversionFactor: number;
+export function kcalPer(product: Product): number {
+    const gramsConversionFactor = 100 / product.serving;
+    return product.kcal * gramsConversionFactor;
+}
 
-//     constructor(
-//         public description: string,
-//         public price: number,
-//         public weight: number,
-//         public serving: number,
-//         public kcal: number,
-//         public protein: number) {
+export function proteinRatio(product: Product): number {
+    return product.kcal / product.protein
+}
 
-//         this.gramsConversionFactor = 100 / serving;
-//     }
-
-//     static createProduct(obj: Product) {
-//         const { description, price, weight, serving, kcal, protein } = obj;
-//         return new Row(description, price, weight, serving, kcal, protein);
-//     }
-
-//     toObj(): Product {
-//         return {
-//             description: this.description,
-//             price: this.price,
-//             weight: this.weight,
-//             serving: this.serving,
-//             kcal: this.kcal,
-//             protein: this.protein
-//         }
-//     }
-
-//     proteinPer(): number {
-//         return this.protein * this.gramsConversionFactor;
-//     }
-
-//     kcalPer(): number {
-//         return this.kcal * this.gramsConversionFactor;
-//     }
-
-//     proteinRatio(): number {
-//         return this.kcal / this.protein
-//     }
-
-//     proteinPrice(): number {
-//         const protein_per_gram = this.protein / this.serving;
-//         const price_per_gram = this.price / this.weight;
-//         return price_per_gram / protein_per_gram;
-//     }
-// }
+export function proteinPrice(product: Product): number {
+    const protein_per_gram = product.protein / product.serving;
+    const price_per_gram = product.price / product.weight;
+    return price_per_gram / protein_per_gram;
+}

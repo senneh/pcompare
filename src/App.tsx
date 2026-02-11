@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react'
 import './App.css'
 import { Form } from './componenets/Form'
-import { Table } from './componenets/Table'
-import type { Product } from './Product';
+import { Table, type SortConfig } from './componenets/Table'
+import { proteinPrice, proteinRatio, type Product } from './Product';
 
 const initialData: Product[] = [
   {
@@ -32,7 +32,6 @@ const initialData: Product[] = [
 ];
 
 
-
 function App() {
   const [formOpen, setFormOpen] = useState(true);
 
@@ -42,7 +41,6 @@ function App() {
   });
 
   useEffect(() => {
-    console.log("saving data");
     localStorage.setItem("products", JSON.stringify(data));
   }, [data]);
 
@@ -54,13 +52,52 @@ function App() {
     setData([...data, newRow])
   }
 
+  const handleSortBy = (cfg: SortConfig | null) => {
+    if (!cfg) return;
+    const sorted = [...data].sort((a, b) => {
+      switch (cfg.key) {
+        case "description":
+          return cfg.direction === "asc" ?
+            a.description.localeCompare(b.description) :
+            b.description.localeCompare(a.description);
+        case "price":
+          return cfg.direction === 'asc' ?
+            a.price - b.price : b.price - a.price;
+        case "kcal":
+          return cfg.direction === "asc" ?
+            a.kcal - b.kcal : b.kcal - a.kcal;
+        case "prot":
+          return cfg.direction === 'asc' ?
+            a.protein - b.protein : b.protein - a.protein;
+        case "protRatio": {
+          const aPr = proteinRatio(a);
+          const bPr = proteinRatio(b);
+          return cfg.direction === 'asc' ?
+            aPr - bPr : bPr - aPr;
+        }
+        case "protPrice": {
+          const aPr = proteinPrice(a);
+          const bPr = proteinPrice(b);
+          return cfg.direction === 'asc' ?
+            aPr - bPr : bPr - aPr;
+        }
+      }
+    });
+
+    setData(sorted);
+  }
+
   return (
     <div className='app'>
-      <h1>Compare Foods</h1>
+      <header>
+
+        <h1>Protein Comparer</h1>
+        <p>compare protein ratios in foods</p>
+      </header>
       <div>
         <Form addRow={handleAddRow} />
       </div>
-      <Table products={data} deleteRow={handleDeleteRow} />
+      <Table products={data} deleteRow={handleDeleteRow} sortBy={handleSortBy} />
     </div>
   )
 }
