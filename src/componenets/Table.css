@@ -1,0 +1,49 @@
+/* .table-wrapper {
+    width: 100%;
+} */
+
+.table {
+    display: block;
+    overflow: hidden;
+    table-layout: auto;
+    border-collapse: collapse;
+    /* box-shadow: 0px 10px 10px #ccc; */
+    border-radius: 4px;
+    white-space: nowrap;
+    margin: auto;
+    border: 1px solid #ccc;
+}
+
+.table thead {
+    background-color: #ccc;
+    color: #222;
+}
+
+.table th,
+.table td {
+    padding: 0.8rem;
+}
+
+.table td {
+    border-top: 0.5 solid #ccc;
+}
+
+.table tbody tr:hover {
+    background-color: #eee;
+}
+
+.expand {
+    width: 100%;
+}
+
+
+.delete-btn {
+    color: #e10d05;
+    border: none;
+    width: 1.5em;
+    height: 1.5em;
+    display: grid;
+    place-items: center;
+    background-color: unset;
+    cursor: pointer;
+}
