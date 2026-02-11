@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 
 import "./Table.css";
 import { BsTrashFill } from "react-icons/bs";

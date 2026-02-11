@@ -33,8 +33,6 @@ const initialData: Product[] = [
 
 
 function App() {
-  const [formOpen, setFormOpen] = useState(true);
-
   const [data, setData] = useState<Product[]>(() => {
     const stored = localStorage.getItem("products");
     return stored ? JSON.parse(stored) : initialData;
